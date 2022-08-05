@@ -1,3 +1,3 @@
-# Automating-Test-Results-and-Downloading-Invidiual-Test-Attachments
+# Parallel Appium Execution using Jenkins
 
-This is an upcoming project that will go through how Digital.ai's Continuous Testing platform can help automate the process of retrieving Test Results and individual Test Attachments in case of test failure, when running Automated Appium Tests.
+In this example we will look at how we can create an automated CICD pipeline to execute Appium Scripts against iOS and Devices against Digital.ai's Continuous Testing Platform.
