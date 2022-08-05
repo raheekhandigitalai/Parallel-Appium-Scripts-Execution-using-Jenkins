@@ -2,59 +2,45 @@
 
 In this example we will look at how we can create an automated CICD pipeline to execute Appium Scripts against iOS and Devices against Digital.ai's Continuous Testing Platform.
 
+For this example I am using a Pipeline Project created:
+
+![image](https://user-images.githubusercontent.com/71343050/183140704-b8b65a70-69e6-46b5-8511-0a420d16821d.png)
+
+The reason for this is I want to build stages for different phases I have throughout this execution. By having different stages, I can better debug and understand when a failure occurs.
+
+I will be writing this code in Groovy, using the "Pipeline script":
+
+![image](https://user-images.githubusercontent.com/71343050/183142120-3879fecd-4d08-482e-9f7a-ae787d3f6a1b.png)
+
+Let's look at the stages that I'll build out:
+
+**Preparation**
+
 ```
-def getJsonObjectFromResponseOutput(response, jsonObject) {
-        def jsonContent = new groovy.json.JsonSlurperClassic().parseText(response)
-            jsonObject = jsonContent.data[jsonObject].toString()
-            return jsonObject
+stage('Preparation') { 
+        git 'https://github.com/raheekhandigitalai/ExperiBankDemoApplication.git'
+        mvnHome = tool 'M3'
 }
+```
 
-def getJsonObjectFromResponseOutputID(response, JsonObject) {
-        def jsonContent = new groovy.json.JsonSlurper().parseText(response)
-        jsonObject = jsonContent.id
-        return jsonObject
+**Build**
+
+```
+stage('Build') {
+        withEnv(["MVN_HOME=$mvnHome"]) {
+                if (isUnix()) {
+                        sh '"$MVN_HOME/bin/mvn" -Dmaven.test.failure.ignore clean install'
+                } else {
+                        bat(/"%MVN_HOME%\bin\mvn" -Dmaven.test.failure.ignore clean install/)
+                }
+        }
 }
+```
 
-def getJsonObjectFromResponseOutputName(response, JsonObject) {
-        def jsonContent = new groovy.json.JsonSlurper().parseText(response)
-        jsonObject = jsonContent.name
-        return jsonObject
-}
+**Results**
 
-node {
-    
-    String CLOUD_URL = env.getProperty('CLOUD_URL')
-    String ACCESS_KEY = env.getProperty('ACCESS_KEY')
-    String JENKINS_BUILD_NUMBER = env.getProperty('BUILD_NUMBER')
-    
-    String triggerResponseCreateTestView = ""
-    String triggerResponseGetTestViewResults = ""
-    String triggerResponseDeleteTestView = ""
-    String passedCount = ""
-    String failedCount = ""
-    String incompleteCount = ""
-    String skippedCount = ""
-    String totalCount = ""
-    
-    String testViewId = ""
-    String TestViewName = ""
-    
-    def mvnHome
-    
-    // stage('Preparation') { 
-    //     git 'https://github.com/raheekhandigitalai/ExperiBankDemoApplication.git'
-    //     mvnHome = tool 'M3'
-    // }
-    // stage('Build') {
-    //     withEnv(["MVN_HOME=$mvnHome"]) {
-    //         if (isUnix()) {
-    //             sh '"$MVN_HOME/bin/mvn" -Dmaven.test.failure.ignore clean install'
-    //         } else {
-    //             bat(/"%MVN_HOME%\bin\mvn" -Dmaven.test.failure.ignore clean install/)
-    //         }
-    //     }
-    // }
-    stage('Report Summary') {
+```
+stage('Report Summary') {
         triggerResponseCreateTestView = sh(script: '''curl --location --request POST \'''' + CLOUD_URL + '''/reporter/api/testView\' --header \'Content-Type: application/json\' --header \'Authorization: Bearer ''' + ACCESS_KEY + '''\' --data \'{"name": "TestViewFromJenkins", "byKey": "date", "groupByKey1": "device.os", "groupByKey2": "device.version"}\'''', returnStdout: true).trim()
         echo "Response from Create View: ${triggerResponseCreateTestView}"
         
@@ -84,11 +70,14 @@ node {
         
         totalCount = getJsonObjectFromResponseOutput(triggerResponseGetTestViewResults, "_count_")
         echo "Total Count: ${totalCount}"
-    }
-    stage('Tear Down') {
+}
+```
+
+**Clean Up**
+
+```
+stage('Tear Down') {
         triggerResponseDeleteTestView = sh(script: '''curl --location --request DELETE \'''' + CLOUD_URL + '''/reporter/api/testView/''' + testViewId + '''\' --header \'Content-Type: application/json\' --header \'Authorization: Bearer ''' + ACCESS_KEY + '''\'''', returnStdout: true).trim()
         echo triggerResponseDeleteTestView
-    }
 }
-
 ```
