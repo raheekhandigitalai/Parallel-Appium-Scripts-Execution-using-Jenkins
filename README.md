@@ -26,6 +26,8 @@ stage('Preparation') {
 The preparation stage is calling out to a GitHub repository where all the Appium Scripts are stored.
 Since I am using Maven to execute my Appium Scripts, I am also defining a global variable for Maven is being set as "M3".
 
+------
+
 **Build**
 
 ```
@@ -41,6 +43,8 @@ stage('Build') {
 ```
 
 In the Build Stage, I am using Maven commands to run the Appium Scripts. Depending on if the Tests are ran from a Unix based platform or Windows, I've put in a conditional statement to run according to the platform.
+
+------
 
 **Results**
 
@@ -80,6 +84,8 @@ stage('Report Summary') {
 
 In the Results stage, I am utilizing Digital.ai's Continuous Testing APIs that are publically available. In order to retrieve the Test Results, I need to first create a "Test View". After that, I am retrieving Test Results from the created Test View and applying a filter to only give me the results from this Jenkins Build Run.
 
+------
+
 **Clean Up**
 
 ```
@@ -91,6 +97,6 @@ stage('Tear Down') {
 
 In the Clean Up stage, I am deleting the Test View.
 
-==========================================================
+------
 
 Keep in mind that the Stages does not have to be built out like this, or even with this Logic. For this particular scenario this is what I want to happen. Feel free to explore and experiment with that works best for you.
