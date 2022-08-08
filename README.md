@@ -104,3 +104,5 @@ In the Clean Up stage, I am deleting the Test View, otherwise if we were to crea
 ------
 
 Keep in mind that the Stages does not have to be built out like this, or even with this Logic. For this particular scenario this is what I want to happen. Feel free to explore and experiment with that works best for you.
+
+To get the Full Script Example, see Pipeline_Groovy_Script.txt
