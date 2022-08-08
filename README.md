@@ -24,7 +24,7 @@ stage('Preparation') {
 ```
 
 The preparation stage is calling out to a GitHub repository where all the Appium Scripts are stored.
-Since I am using Maven to execute my Appium Scripts, I am also defining a global variable for Maven is being set as "M3".
+Since I am using Maven to execute my Appium Scripts, I am also defining a global variable for Maven is being set as "M3" in order to be able to run Maven based commands.
 
 ------
 
@@ -42,7 +42,7 @@ stage('Build') {
 }
 ```
 
-In the Build Stage, I am using Maven commands to run the Appium Scripts. Depending on if the Tests are ran from a Unix based platform or Windows, I've put in a conditional statement to run according to the platform.
+In the Build Stage, I am using Maven commands to run the Appium Scripts. Depending on if the Tests are ran from a Unix based platform or Windows, I've put in a conditional statement to run according to the platform. This will trigger tests from the GitHub Repository.
 
 ------
 
@@ -66,23 +66,25 @@ stage('Report Summary') {
         echo "Response from Get Test View Results: ${triggerResponseGetTestViewResults}"
     
         passedCount = getJsonObjectFromResponseOutput(triggerResponseGetTestViewResults, "passedCount")
-        echo "Passed Count: ${passedCount}"
-        
         failedCount = getJsonObjectFromResponseOutput(triggerResponseGetTestViewResults, "failedCount")
-        echo "Failed Count: ${failedCount}"
-        
         incompleteCount = getJsonObjectFromResponseOutput(triggerResponseGetTestViewResults, "incompleteCount")
-        echo "Incomplete Count: ${incompleteCount}"
-        
         skippedCount = getJsonObjectFromResponseOutput(triggerResponseGetTestViewResults, "skippedCount")
-        echo "Skipped Count: ${skippedCount}"
-        
         totalCount = getJsonObjectFromResponseOutput(triggerResponseGetTestViewResults, "_count_")
+        
+        echo "Passed Count: ${passedCount}"
+        echo "Failed Count: ${failedCount}"
+        echo "Incomplete Count: ${incompleteCount}"
+        echo "Skipped Count: ${skippedCount}"
         echo "Total Count: ${totalCount}"
 }
 ```
 
 In the Results stage, I am utilizing Digital.ai's Continuous Testing APIs that are publically available. In order to retrieve the Test Results, I need to first create a "Test View". After that, I am retrieving Test Results from the created Test View and applying a filter to only give me the results from this Jenkins Build Run.
+
+A Test View is simply a view that has test results. Think of Test View as a container, we need a container to fetch the information about the container properties.
+
+[Create Test View API Documentation](https://docs.experitest.com/display/TE/Rest+API+-+TestView#RestAPITestView-Createtestviewsgroup)
+[Get Filtered Test Results from Test View Documentation](https://docs.experitest.com/display/TE/Rest+API+-+TestView#RestAPITestView-Gettestscounts)
 
 ------
 
@@ -95,7 +97,9 @@ stage('Tear Down') {
 }
 ```
 
-In the Clean Up stage, I am deleting the Test View.
+In the Clean Up stage, I am deleting the Test View, otherwise if we were to create Test Views and keep them every time, it would just clog up the Reporter unnecessarily.
+
+[Delete Test View API Documentation](https://docs.experitest.com/display/TE/Rest+API+-+TestView#RestAPITestView-Deletetestview)
 
 ------
 
