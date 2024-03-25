@@ -83,9 +83,9 @@ In the Results stage, I am utilizing Digital.ai's Continuous Testing APIs that a
 
 A Test View is simply a view that has test results. Think of Test View as a container, we need a container to fetch the information about the container properties.
 
-[Create Test View API Documentation](https://docs.experitest.com/display/TE/Rest+API+-+TestView#RestAPITestView-Createtestviewsgroup)
+[Create Test View API Documentation](https://docs.digital.ai/bundle/TE/page/rest_api_-_testview.html#RestAPI-TestView-CreateTestViewsGroup)
 
-[Get Filtered Test Results from Test View Documentation](https://docs.experitest.com/display/TE/Rest+API+-+TestView#RestAPITestView-Gettestscounts)
+[Get Filtered Test Results from Test View Documentation](https://docs.digital.ai/bundle/TE/page/rest_api_-_testview.html#RestAPI-TestView-GetTestCounts)
 
 ------
 
@@ -100,7 +100,7 @@ stage('Tear Down') {
 
 In the Clean Up stage, I am deleting the Test View, otherwise if we were to create Test Views and keep them every time, it would just clog up the Reporter unnecessarily.
 
-[Delete Test View API Documentation](https://docs.experitest.com/display/TE/Rest+API+-+TestView#RestAPITestView-Deletetestview)
+[Delete Test View API Documentation](https://docs.digital.ai/bundle/TE/page/rest_api_-_testview.html#RestAPI-TestView-DeleteTestView)
 
 ------
 
